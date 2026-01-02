@@ -47,8 +47,31 @@ public class TileManager {
     }
 
     public void draw(Graphics2D g2){
-        g2.drawImage(tile[0].tileImage, 0, 0 , gp.tileSize , gp.tileSize, null);
-        g2.drawImage(tile[1].tileImage, 48, 0 , gp.tileSize , gp.tileSize, null);
-        g2.drawImage(tile[2].tileImage, 96, 0, gp.tileSize , gp.tileSize,null);
+        // g2.drawImage(tile[0].tileImage, 0, 0 , gp.tileSize , gp.tileSize, null);
+        // g2.drawImage(tile[1].tileImage, 48, 0 , gp.tileSize , gp.tileSize, null);
+        // g2.drawImage(tile[2].tileImage, 96, 0, gp.tileSize , gp.tileSize,null);
+
+        //we dont draw like this . that is a noobie approach.
+        //we can use a while loop here to do this .
+        //later we will build inifite world system like minecraft.
+
+        int col = 0;
+        int row = 0;
+        int x = 0;
+        int y = 0;
+
+        //display entire map with grass , then we can add map , with txt file.
+        while(col < gp.maxScreenCol && row < gp.maxScreenRow){
+            g2.drawImage(tile[0].tileImage, x, y , gp.tileSize , gp.tileSize , null);
+            col++;
+            x = x + gp.tileSize; //x will increase based on tile size
+            if(col == gp.maxScreenCol){
+                //mmove downwards
+                col = 0; //reset
+                x = 0; //reset
+                row++;
+                y = y + gp.tileSize;
+            }
+        }
     }
 }
