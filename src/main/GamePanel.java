@@ -7,63 +7,28 @@ import java.awt.Graphics2D;
 
 import javax.swing.JPanel;
 
+import entity.Player;
+
 //thgis game panel class extends the Jpanel in built class that is used for GUI
 public class GamePanel extends JPanel implements Runnable {
 
-  // screen settings>
+  // SCREEN SETTINGS>
+
   final int originalTileSize = 16; // 16 * 16 tile , means 16 * 16 pixels , thjis is a convention to keep objects// of a 2d game size to 16 * 16 .                           
   // 16 * 16 will look very small in the screen for a modern monitor
   // thus we have to scale it.
   final int scale = 3; // 16 * 16 will acquire that much area but to show it larger we will multiply it // with 3 , that is 16 * 3 is 48 so in modern monitors
   // with higher resolutions it will appear a little bit bigger here.
-  final int tileSize = originalTileSize * scale; // 48 * 48 tile size.
+  public final int tileSize = originalTileSize * scale; // 48 * 48 tile size.
   // defining the size of the game screen>
   final int maxScreenCol = 16;
   final int maxScreenRow = 12;
   final int screenWidth = maxScreenCol * tileSize; // 768 pixels
   final int screenHeight = maxScreenRow * tileSize; // 576 pixels
 
-  //FPS
+  //FPS SETTINGS>
   final int FPS = 100;
-  int currentFps = 0; //track current fps
-
-  KeyHandler keyH = new KeyHandler(); //instantiate the key handler object from the keyhandler class
-
-  //PLAYER DEFAULT POSITIONS>
-  int playerX = 100;
-  int playerY = 100;
-
-
-  // consturctor for the GamePanel class
-  public GamePanel() {
-
-    this.setPreferredSize(new Dimension(screenWidth, screenHeight)); // size of the game panel
-    this.setBackground(Color.black); // make background color black
-
-    // one thing is that games , is withour double buffering the swing would draw
-    // graphics directly to screeen
-    // that is a bad expericence as user might see screen flickering , partially
-    // draw frames , incomplete or torn visulas ..etc
-    // this happens because drawing operatons are not instantaneous
-
-    // how double buffering works is :
-    // swing creates off screen buffer (a hidden image in memory)
-    // all drawing operations (paintComponent) are performed on this buffer
-    // once the frame is fully rendered on the buffer thebuffer is copied to screen
-    // in a single operation.
-    // that is much more efficient that synchronous rendering whcih is bad. , this
-    // makes rendering appear smooth and stable
-
-    // in short , setDoubleBuffered(true) tells swing to render frames off screen
-    // first in a hidden image in memory and then display
-    // them all at once , resulting in smooth , flicker -free graphics which is
-    // essential for real-time game graphics rendering
-    this.setDoubleBuffered(true);
-
-    //add kety listener for constructor
-    this.addKeyListener(keyH); //with this the game panel will recognise the key input.
-    this.setFocusable(true); //with this gamePanle can be focussed to recive key input .
-  }
+  public int currentFps = 0; //track current fps
 
   //Theory :  in games , time is everything, without the track of time a game cant run.
   //when u start a game , the program of the game runs continuosuly on the background that has the knowledge of ur time of the game , where u r currently what u r doing.
@@ -77,12 +42,41 @@ public class GamePanel extends JPanel implements Runnable {
   Thread gameThread; // this thread is the key here that can make a game display all frames in a flow all those cool stuff.
   //to run a thread the class should implement Runnable , that Runnable calls a run method that basically runs the thread
 
+  //start game thread method
   public void startGameThread() {
-    gameThread = new Thread(this); //instantiate a new thread here , we are passing the GamePanel class only coz that is the thread we need to do.
     //this is how u instantiate a thread for a class.
+    gameThread = new Thread(this); //instantiate a new thread here , we are passing the GamePanel class only coz that is the thread we need to do.
     //start the thead>
     gameThread.start(); //it will automatically call the run method which will run the thread.
   }
+
+  //init key handler
+  KeyHandler keyH = new KeyHandler(); //instantiate the key handler object from the keyhandler class
+
+  //instantiate player class >
+  Player player = new Player(this, keyH); //pass the game panel class and the key handler object
+
+  // consturctor for the GamePanel class
+  public GamePanel() {
+
+    this.setPreferredSize(new Dimension(screenWidth, screenHeight)); // size of the game panel
+    this.setBackground(Color.black); // make background color black
+
+    // in short , setDoubleBuffered(true) tells swing to render frames off screen
+    // first in a hidden image in memory and then display
+    // them all at once , resulting in smooth , flicker -free graphics which is
+    // essential for real-time game graphics rendering
+    this.setDoubleBuffered(true);
+
+    //add kety listener for constructor
+    this.addKeyListener(keyH); //with this the game panel will recognise the key input.
+    this.setFocusable(true); //with this gamePanle can be focussed to recive key input .
+    
+    //set default value of player
+    player.setDefaultValues(100,100,false);
+  }
+
+
 
   //implement run method to run the thread
   @Override
@@ -200,22 +194,8 @@ public class GamePanel extends JPanel implements Runnable {
 
   }
 
-  public void update() {
-    boolean isMoving = keyH.upPressed || keyH.downPressed || keyH.leftPressed || keyH.rigthPressed;
-    //update player speed when sprint.
-    //this is usually done in game mechanics , user would press movement keys then sprint , then only it works , normal sprint logic
-    int playerSpeed = (keyH.shiftPressed && isMoving) ? 6 : 2; //if sprint then move 4 pixels else walk is 2 pixels
-    if(keyH.upPressed == true){
-      //make player char go up>
-      playerY = playerY - playerSpeed; //based on the speed the player is moving we update the y cordinate as up involved y cordinate only.
-    } else if(keyH.downPressed == true){
-      playerY = playerY + playerSpeed;
-    } else if(keyH.leftPressed == true){
-      playerX = playerX - playerSpeed;
-    } else if(keyH.rigthPressed == true){
-      playerX = playerX + playerSpeed;
-    }
-
+  public void update() { 
+    player.update(keyH);
   }
 
   //paintComponent is one of the built in methods in java , this is used to draw frames in the JPanel.
@@ -230,10 +210,8 @@ public class GamePanel extends JPanel implements Runnable {
     //graphics2d calss extends the graphics class to provide more sophisticated control over geometrry , coordinate transformations,
     //color management and text layouts.
     Graphics2D g2 = (Graphics2D)g;
-    g2.setColor(Color.white); //color for drawing.
-    g2.drawString("FPS: " + currentFps , 10 ,20 );
-    //when u want to draw something on the screen with grahics 2d , it asks for the x,y coordinates , and the width and the height for the screen , so that it can draw and render it.
-    g2.fillRect(playerX, playerY, tileSize, tileSize);
+    player.draw(g2, this);
+   
     //after drawing is done , we should dispose the graphgics so that java garbage collectors can remove the resources that the graphics was sharing
     g2.dispose();
 
