@@ -55,47 +55,46 @@ public class Player extends Entity {
         boolean isMoving = keyH.upPressed || keyH.downPressed || keyH.leftPressed || keyH.rigthPressed;
 
         //TODO: now the player moves while standing , make it stable and standing when not moving.
-
+        if(isMoving){
         //TODO: add sprint direction also
 
-        //update player speed when sprint.
-        //this is usually done in game mechanics , user would press movement keys then sprint , then only it works , normal sprint logic
-        if (isMoving && keyH.shiftPressed) sprint = true;
-        if (!keyH.shiftPressed) sprint = false;
+            //update player speed when sprint.
+            //this is usually done in game mechanics , user would press movement keys then sprint , then only it works , normal sprint logic
+            if (isMoving && keyH.shiftPressed) sprint = true;
+            if (!keyH.shiftPressed) sprint = false;
 
-        
-
-        if(keyH.upPressed == true){
-        //make player char go up>
-            this.direction = "up";    
-            y = y - speed; //based on the speed the player is moving we update the y cordinate as up involved y cordinate only.            
-        } else if(keyH.downPressed == true){
-            this.direction = "down";
-            y = y + speed;
-        } else if(keyH.leftPressed == true){
-            this.direction = "left";
-            x = x - speed;
-        } else if(keyH.rigthPressed == true){
-            this.direction = "right";
-            x = x + speed;
-        }
-
-        //after movement incement spritecounter > 
-        //think of it like a mental image , after N frames ,we need to change the image ,that is the animation logic here.
-        //sprite counter determines,  how many frames have passed.
-        spriteCounter++;
-        //we should already know by now , this update method gets called x frames per seconds depending upon our FPS settings
-
-        //every frame we increment the counter.
-        //since update runs every frame , after 20 frames passed while moving we are changing the image.
-        if(spriteCounter > 20) {
-            //spriteNum depicts which animation frame to draw
-            if(spriteNum == 1){ //for eg up1
-                spriteNum = 2; //up2
-            } else if(spriteNum == 2){ //for eg down2
-                spriteNum = 1; //next down 1 , like how walking works
+            if(keyH.upPressed == true){
+            //make player char go up>
+                this.direction = "up";    
+                y = y - speed; //based on the speed the player is moving we update the y cordinate as up involved y cordinate only.            
+            } else if(keyH.downPressed == true){
+                this.direction = "down";
+                y = y + speed;
+            } else if(keyH.leftPressed == true){
+                this.direction = "left";
+                x = x - speed;
+            } else if(keyH.rigthPressed == true){
+                this.direction = "right";
+                x = x + speed;
             }
-            spriteCounter = 0;
+
+            //after movement incement spritecounter > 
+            //think of it like a mental image , after N frames ,we need to change the image ,that is the animation logic here.
+            //sprite counter determines,  how many frames have passed.
+            spriteCounter++;
+            //we should already know by now , this update method gets called x frames per seconds depending upon our FPS settings
+
+            //every frame we increment the counter.
+            //since update runs every frame , after 20 frames passed while moving we are changing the image.
+            if(spriteCounter > 20) {
+                //spriteNum depicts which animation frame to draw
+                if(spriteNum == 1){ //for eg up1
+                    spriteNum = 2; //up2
+                } else if(spriteNum == 2){ //for eg down2
+                    spriteNum = 1; //next down 1 , like how walking works
+                }
+                spriteCounter = 0;
+            }
         }
     }
 
