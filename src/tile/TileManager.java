@@ -1,6 +1,9 @@
 package tile;
 
 import java.awt.Graphics2D;
+import java.io.BufferedReader;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 
 import javax.imageio.ImageIO;
 
@@ -11,12 +14,16 @@ public class TileManager {
     GamePanel gp;
     Tile[] tile;
     final int tileLength = 10;
+    int mapTileNum[][];
 
     public TileManager(GamePanel gp) {
         this.gp = gp;
         tile = new Tile[tileLength];
         //call the getTileImage in the constructor to get the image of the tiles when the class of tile loads.
+        mapTileNum = new int[gp.maxScreenCol][gp.maxScreenRow]; //map tile number 2d matrix will store all the numbers from thge map.txt file.
         getTileImage();
+        //load the map
+        loadMap("/maps/map_01.txt");
     }
 
     public void getTileImage(){
@@ -46,6 +53,39 @@ public class TileManager {
        
     }
 
+    //load the map
+    public void loadMap(String mapLocation){
+        try {
+            //open the map text file , and read it efficiently.
+            InputStream is = getClass().getResourceAsStream(mapLocation); //finds the resource , open it as stream of bytes , return a handle (InputStream) to read those bytes sequentially.
+            BufferedReader br = new BufferedReader(new InputStreamReader(is)); //as input stream is raw bytes , u need to convert bytes -> charecters , this input stream reader does exactly that , buffered reader reads a biug chunk at once , stores it in memory , lets yiu read line by line efficiently.
+
+            int col = 0;
+            int row = 0;
+            
+            while(col < gp.maxScreenCol && row < gp.maxScreenRow){
+                String line = br.readLine(); //it is gonna read a single line from the buffered reader and put into the String line var.
+                //after we get the line we gonna get the numbers from the line
+                while(col < gp.maxScreenCol){
+                    String numbers[] = line.split(" "); //split by space gives us the charecters.
+                    int num = Integer.parseInt(numbers[col]); //convert the current number from string to integer.
+                    //then we store the extracted number in the mapTileNum 2d array we had.
+                    mapTileNum[col][row] = num; //for that col and that row inseer that number we just got.
+                    //incrment col.
+                    col++;
+                }
+                if(col == gp.maxScreenCol){
+                    col = 0;
+                    row++;
+                }
+            }
+            //close the buffered reader.
+            br.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
     public void draw(Graphics2D g2){
         // g2.drawImage(tile[0].tileImage, 0, 0 , gp.tileSize , gp.tileSize, null);
         // g2.drawImage(tile[1].tileImage, 48, 0 , gp.tileSize , gp.tileSize, null);
@@ -60,18 +100,19 @@ public class TileManager {
         int x = 0;
         int y = 0;
 
-        //display entire map with grass , then we can add map , with txt file.
+        //display entire map.
         while(col < gp.maxScreenCol && row < gp.maxScreenRow){
-            g2.drawImage(tile[0].tileImage, x, y , gp.tileSize , gp.tileSize , null);
-            col++;
-            x = x + gp.tileSize; //x will increase based on tile size
+            int tileNum = mapTileNum[col][row]; //get the number for that current index.
+            g2.drawImage(tile[tileNum].tileImage, x, y , gp.tileSize , gp.tileSize , null);
+            col++; //increment col
+            x = x + gp.tileSize;
             if(col == gp.maxScreenCol){
-                //mmove downwards
-                col = 0; //reset
-                x = 0; //reset
+                col = 0;
+                x = 0;
                 row++;
                 y = y + gp.tileSize;
             }
+            
         }
     }
 }
