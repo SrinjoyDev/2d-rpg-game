@@ -24,7 +24,7 @@ public class GamePanel extends JPanel implements Runnable {
   final int screenHeight = maxScreenRow * tileSize; // 576 pixels
 
   //FPS
-  final int FPS = 120;
+  final int FPS = 60;
 
   KeyHandler keyH = new KeyHandler(); //instantiate the key handler object from the keyhandler class
 
@@ -141,7 +141,10 @@ public class GamePanel extends JPanel implements Runnable {
   }
 
   public void update() {
-    int playerSpeed = keyH.sprint ? 4 : 2; //if sprint then move 4 pixels else walk is 2 pixels
+    boolean isMoving = keyH.upPressed || keyH.downPressed || keyH.leftPressed || keyH.rigthPressed;
+    //update player speed when sprint.
+    //this is usually done in game mechanics , user would press movement keys then sprint , then only it works , normal sprint logic
+    int playerSpeed = (keyH.shiftPressed && isMoving) ? 6 : 2; //if sprint then move 4 pixels else walk is 2 pixels
     if(keyH.upPressed == true){
       //make player char go up>
       playerY = playerY - playerSpeed; //based on the speed the player is moving we update the y cordinate as up involved y cordinate only.

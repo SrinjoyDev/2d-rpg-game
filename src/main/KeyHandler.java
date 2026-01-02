@@ -10,8 +10,10 @@ public class KeyHandler implements KeyListener {
     //we add this keyhandler to the gamePanel class so that it knows when keys are pressed or released.
 
     public boolean upPressed , downPressed , leftPressed , rigthPressed = false; //defaulted to false
+    public boolean shiftPressed = false;
     public boolean walk  = true; //default is walk.
     public boolean sprint = false; //shift + movement keys = run
+    
 
     //TODO : add diagonal movement booleans also
 
@@ -39,8 +41,8 @@ public class KeyHandler implements KeyListener {
             rigthPressed = true;
         }
 
-        if(code == KeyEvent.VK_SHIFT && (upPressed || downPressed || leftPressed || rigthPressed)){
-            sprint = true;
+        if(code == KeyEvent.VK_SHIFT){
+            shiftPressed = true;
         }
 
         //TODO : we can update diagonal movements too.
@@ -72,7 +74,7 @@ public class KeyHandler implements KeyListener {
 
         //shift release means walk again.
         if (code == KeyEvent.VK_SHIFT){
-            sprint = false;
+            shiftPressed = false;
         }
 
     }
