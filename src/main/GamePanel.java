@@ -24,7 +24,8 @@ public class GamePanel extends JPanel implements Runnable {
   final int screenHeight = maxScreenRow * tileSize; // 576 pixels
 
   //FPS
-  final int FPS = 60;
+  final int FPS = 100;
+  int currentFps = 0; //track current fps
 
   KeyHandler keyH = new KeyHandler(); //instantiate the key handler object from the keyhandler class
 
@@ -115,29 +116,88 @@ public class GamePanel extends JPanel implements Runnable {
     double drawInterval = 1000000000/FPS; //close to 0.01666 seconds , that means we draw the screen every that much seconds
     double nextDrawTime = System.nanoTime() + drawInterval ; //after this draw interval we draw the graphics
 
-    while(gameThread != null){
-      update();
+    int frameCount = 0;
+    long fpsTimer = System.nanoTime();
+    
+    // Main game loop
+    // This loop runs continuously while the game thread exists.
+    // Each iteration = one frame (update + render), paced to a fixed FPS.
+    while (gameThread != null) {
 
-      repaint();
+        // 1. UPDATE GAME LOGIC
+        // --------------------
+        // Update the game state:
+        // - player movement
+        // - enemy AI
+        // - collisions
+        // - animations
+        // This runs once per frame.
+        update();
 
-      //core game loop logic for update and repaint
-      try {
-        //after that repaint also ,we need to find the remaining time that is there and make the thread sleep during that time , potherwise next update will be again fast .
-        double remainingTime = (nextDrawTime - System.nanoTime())/1000000; //conv to ms , as theread dosent accept nano seconds
+        // 2. REQUEST RENDER
+        // -----------------
+        // Tells Swing to repaint the screen.
+        // The actual drawing happens later on the EDT
+        // inside paintComponent(Graphics g).
+        repaint();
 
-        if(remainingTime < 0){
-          remainingTime = 0;
+        //count rendered frames>
+        frameCount++;
+        //calulate fps once every second
+        long now = System.nanoTime();
+        if(now - fpsTimer > 1_000_000_000L){ // 1 B nano secs = 1 sec
+          //that means 1 second done
+          currentFps = frameCount;
+          frameCount = 0;
+          fpsTimer = now;
         }
 
-        Thread.sleep((long) remainingTime);  
+        try {
+            // 3. FRAME TIMING CALCULATION
+            // ---------------------------
+            // nextDrawTime = the exact time (in nanoseconds) when this frame
+            // is supposed to finish.
+            //
+            // System.nanoTime() = current time.
+            //
+            // Subtracting them gives the remaining time left for this frame.
+            //
+            // Divide by 1_000_000 to convert nanoseconds → milliseconds
+            // because Thread.sleep() only accepts milliseconds.
+            double remainingTime =  (nextDrawTime - System.nanoTime()) / 1_000_000;
+                   
+            // 4. FRAME OVERRUN PROTECTION
+            // ---------------------------
+            // If update + render took longer than the target frame time,
+            // remainingTime becomes negative.
+            //
+            // In that case, we skip sleeping so the game can catch up
+            // instead of slowing down further.
+            if (remainingTime < 0) {
+                remainingTime = 0;
+            }
 
-        nextDrawTime = nextDrawTime + drawInterval;
-      } catch (Exception e) {
-        e.printStackTrace();
-      }
-      
-      
+            // 5. CONTROLLED SLEEP (FRAME PACING)
+            // ---------------------------------
+            // Pause the game thread for the remaining time of this frame.
+            // This ensures each frame takes approximately the same amount
+            // of time, maintaining a stable FPS.
+            Thread.sleep((long) remainingTime);
+
+            // 6. SCHEDULE NEXT FRAME (DRIFT-FREE)
+            // -----------------------------------
+            // Move the target time forward by exactly one frame interval.
+            //
+            // IMPORTANT:
+            // We add drawInterval instead of recalculating from current time
+            // to prevent timing drift and keep the game synced to real time.
+            nextDrawTime = nextDrawTime + drawInterval;
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
+
   }
 
   public void update() {
@@ -171,13 +231,13 @@ public class GamePanel extends JPanel implements Runnable {
     //color management and text layouts.
     Graphics2D g2 = (Graphics2D)g;
     g2.setColor(Color.white); //color for drawing.
-
+    g2.drawString("FPS: " + currentFps , 10 ,20 );
     //when u want to draw something on the screen with grahics 2d , it asks for the x,y coordinates , and the width and the height for the screen , so that it can draw and render it.
     g2.fillRect(playerX, playerY, tileSize, tileSize);
     //after drawing is done , we should dispose the graphgics so that java garbage collectors can remove the resources that the graphics was sharing
     g2.dispose();
 
-    //now we want that rectangle to move around.
+    
   }
 
 }
