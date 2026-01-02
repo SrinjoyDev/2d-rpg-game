@@ -82,7 +82,7 @@ public class KeyHandler implements KeyListener {
     @Override
     //we will not use this here.
     public void keyTyped(KeyEvent e) {
-        throw new UnsupportedOperationException("Unimplemented method 'keyTyped'");
+        
     }
     
 }

@@ -8,6 +8,7 @@ import java.awt.Graphics2D;
 import javax.swing.JPanel;
 
 import entity.Player;
+import tile.TileManager;
 
 //thgis game panel class extends the Jpanel in built class that is used for GUI
 public class GamePanel extends JPanel implements Runnable {
@@ -52,6 +53,7 @@ public class GamePanel extends JPanel implements Runnable {
 
   //init key handler
   KeyHandler keyH = new KeyHandler(); //instantiate the key handler object from the keyhandler class
+  TileManager tileM = new TileManager(this); //instantiate the tile manager.
 
   //instantiate player class >
   Player player = new Player(this, keyH); //pass the game panel class and the key handler object
@@ -210,12 +212,14 @@ public class GamePanel extends JPanel implements Runnable {
     //graphics2d calss extends the graphics class to provide more sophisticated control over geometrry , coordinate transformations,
     //color management and text layouts.
     Graphics2D g2 = (Graphics2D)g;
-    player.draw(g2, this);
-   
+
+    //draw the tile , then draw the player.
+    if(!tileM.isImageNull()) tileM.draw(g2);
+    
+    if(!player.isImageNull()) player.draw(g2, this);
+    
     //after drawing is done , we should dispose the graphgics so that java garbage collectors can remove the resources that the graphics was sharing
     g2.dispose();
-
-    
   }
 
 }

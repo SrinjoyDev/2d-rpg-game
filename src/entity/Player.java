@@ -18,6 +18,7 @@ public class Player extends Entity {
     public Player(GamePanel gp , KeyHandler kh) {
         this.gp = gp;
         this.kh = kh;
+        this.direction = "down";
         //call the player image method here ,to get the player image when the constructor loads.
         getPlayerImage();
     }
@@ -27,7 +28,7 @@ public class Player extends Entity {
         this.x = x;
         this.y = y;
         this.sprint = sprint;
-        this.direction = "down";
+        
     }
 
     //method to get player image
@@ -48,13 +49,18 @@ public class Player extends Entity {
         }
     }
 
+    public boolean isImageNull() {
+       
+        return down1 == null;
+        
+    }
+
     //method to update the position of player
     public void update(KeyHandler keyH) {
 
         int speed = sprint ? 6 : 2;
         boolean isMoving = keyH.upPressed || keyH.downPressed || keyH.leftPressed || keyH.rigthPressed;
 
-        //TODO: now the player moves while standing , make it stable and standing when not moving.
         if(isMoving){
         //TODO: add sprint direction also
 
