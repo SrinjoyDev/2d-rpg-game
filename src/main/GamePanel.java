@@ -77,32 +77,7 @@ public class GamePanel extends JPanel implements Runnable {
   //implement run method to run the thread
   @Override
   public void run() {
-
-    //THEORY:
-
     // //this run method will have the game loop ,whcih will be the core of the game
-    // while(gameThread != null){ //this tells as long as the thread is there that is the process exists , then it will repeat the process that is running inside this loop
-    //   //System.out.println("game thread is running!"); --> test ur game loop is running.
-
-    //   //thread is like time
-    //   //we have to do 2 things here. -> 1.update and draw
-
-    //   //the game loop will keep calling theis update and repaint update and repaint.
-    //   //which is nothing but update player position and draw the position based on the posiion of the player .
-    //   //if u think deep that is how the universe works and time and reality works.
-
-    //   // //1. UPDATE : update information such as charecter positions -> update() method
-
-    //   // update();
-
-    //   // //alse we need to update constraint , adding fps , otherwise it will appear that the movement vanished coz the cpu will execute it as fast as it can
-    //   // //fot that we need that time .
-
-    //   // //2. DRAW : draw the screen with updated information -> draw() method
-    //   // repaint(); //yoooo , what is this ? this is nothing but , this is how u call the paintComponenet ,little RPG game traditions in game development , 
-    //   // ///u can ignore this if u dont want to go deep in game development just here for the java journet. and just understand thsi is how it is used to call paintComponent in 2d game development , but yeah
-    // }
-    
     double drawInterval = 1000000000/FPS; //close to 0.01666 seconds , that means we draw the screen every that much seconds
     double nextDrawTime = System.nanoTime() + drawInterval ; //after this draw interval we draw the graphics
 
