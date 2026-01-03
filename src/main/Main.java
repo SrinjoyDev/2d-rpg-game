@@ -19,9 +19,8 @@ public class Main {
     GamePanel gamePanel = new GamePanel();
     window.add(gamePanel);
 
-    window.pack(); // this causes the window to be sized to fit the preferred size and layouts of
-                   // its subcomponenets that is the GamePanel class here.
-
+    window.pack(); // this causes the window to be sized to fit the preferred size and layouts of  // its subcomponenets that is the GamePanel class here.
+                  
     window.setLocationRelativeTo(null); // making it null , then os will put the gui on centre of the screen
     // set visible to true to see the window
     window.setVisible(true);

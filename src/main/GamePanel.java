@@ -27,21 +27,17 @@ public class GamePanel extends JPanel implements Runnable {
   public final int screenWidth = maxScreenCol * tileSize; // 768 pixels
   public final int screenHeight = maxScreenRow * tileSize; // 576 pixels
 
+  //WORLD MAP SETTINGS>
+  public final int maxWorldCol = 50;
+  public final int maxWorldRow = 50;
+  public final int worldWidth = tileSize * maxWorldCol;
+  public final int worldHeight = tileSize * maxWorldRow;
+
   //FPS SETTINGS>
   final int FPS = 100;
   public int currentFps = 0; //track current fps
 
-  //Theory :  in games , time is everything, without the track of time a game cant run.
-  //when u start a game , the program of the game runs continuosuly on the background that has the knowledge of ur time of the game , where u r currently what u r doing.
-  //time needs to run in a game like real life.
-  //a game dosent render videos/
-  //if u see 60fps that means , the game is producing 60 frames per seconds , it really basiclly 60 static images showing in that speed . whcih makes it look like ur charecrter is moving
-  //or something , but underthe hood it is just 60 images where ur charecter is moving from one place to another , those images are streamed in ur screen efficiently.
-  //mkaing it feel like it is moving 
-
-  //we will make a thread here , thread is something u can start and stop
-  Thread gameThread; // this thread is the key here that can make a game display all frames in a flow all those cool stuff.
-  //to run a thread the class should implement Runnable , that Runnable calls a run method that basically runs the thread
+  Thread gameThread; // define gameThread.
 
   //start game thread method
   public void startGameThread() {
@@ -56,7 +52,7 @@ public class GamePanel extends JPanel implements Runnable {
   TileManager tileM = new TileManager(this); //instantiate the tile manager.
 
   //instantiate player class >
-  Player player = new Player(this, keyH); //pass the game panel class and the key handler object
+  public Player player = new Player(this, keyH , this.screenWidth / 2 - (this.tileSize/2) , this.screenHeight / 2 - (this.tileSize/2)); //pass the game panel class and the key handler object
 
   // consturctor for the GamePanel class
   public GamePanel() {
@@ -65,9 +61,6 @@ public class GamePanel extends JPanel implements Runnable {
     this.setBackground(Color.black); // make background color black
 
     // in short , setDoubleBuffered(true) tells swing to render frames off screen
-    // first in a hidden image in memory and then display
-    // them all at once , resulting in smooth , flicker -free graphics which is
-    // essential for real-time game graphics rendering
     this.setDoubleBuffered(true);
 
     //add kety listener for constructor
@@ -75,7 +68,8 @@ public class GamePanel extends JPanel implements Runnable {
     this.setFocusable(true); //with this gamePanle can be focussed to recive key input .
     
     //set default value of player
-    player.setDefaultValues(100,100,false);
+    //position the player to the center of the screen, starting in the open grassy area
+    player.setDefaultValues(this.tileSize * 25,this.tileSize * 5,false);
   }
 
 

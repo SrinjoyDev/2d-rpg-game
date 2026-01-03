@@ -13,20 +13,28 @@ public class Player extends Entity {
     
     GamePanel gp;
     KeyHandler kh;
+
     public boolean sprint = false;
+
+    //bacgornnd map co-ordintes , the map also needs to move whenn player moves from one location to another
+    public final int screenX;
+    public final int screenY;
     
-    public Player(GamePanel gp , KeyHandler kh) {
+    public Player(GamePanel gp , KeyHandler kh , int screenX , int screenY) {
         this.gp = gp;
         this.kh = kh;
         this.direction = "down";
+
+        this.screenX = screenX;
+        this.screenY = screenY;
         //call the player image method here ,to get the player image when the constructor loads.
         getPlayerImage();
     }
 
     //set default values>
     public void setDefaultValues(int x , int y ,boolean sprint){
-        this.x = x;
-        this.y = y;
+        this.worldX = x;
+        this.worldY = y;
         this.sprint = sprint;
         
     }
@@ -72,16 +80,16 @@ public class Player extends Entity {
             if(keyH.upPressed == true){
             //make player char go up>
                 this.direction = "up";    
-                y = y - speed; //based on the speed the player is moving we update the y cordinate as up involved y cordinate only.            
+                worldY = worldY - speed; //based on the speed the player is moving we update the y cordinate as up involved y cordinate only.            
             } else if(keyH.downPressed == true){
                 this.direction = "down";
-                y = y + speed;
+                worldY = worldY + speed;
             } else if(keyH.leftPressed == true){
                 this.direction = "left";
-                x = x - speed;
+                worldX = worldX - speed;
             } else if(keyH.rigthPressed == true){
                 this.direction = "right";
-                x = x + speed;
+                worldX = worldX + speed;
             }
 
             //after movement incement spritecounter > 
@@ -139,6 +147,7 @@ public class Player extends Entity {
 
         //draw the player image>
         if (playerImage == null) System.out.println("player image found null");
-        g2.drawImage(playerImage, x, y , gp.tileSize , gp.tileSize , null); //null is the image observer here
+        //the player sticks to the centre of the screen , based on the movement of the player , the world aroung it changes.
+        g2.drawImage(playerImage, screenX, screenY , gp.tileSize , gp.tileSize , null); //null is the image observer here
     }
 }
