@@ -1,5 +1,6 @@
 package entity;
 
+import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
 
 //entity class this stores variables will be used in player , monster and NPC classes.
@@ -15,4 +16,8 @@ public class Entity {
     //walking animation>
     public int spriteCounter = 0;
     public int spriteNum = 1;
+
+    //collision detection
+    public Rectangle solidArea; //player's body is solid part  , not the entire thing incuding heads , hands ...etc , that is bad game mechanics
+    public boolean playerCollision = false;
 }

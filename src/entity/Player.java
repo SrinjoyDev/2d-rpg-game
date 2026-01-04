@@ -2,6 +2,7 @@ package entity;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
+import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
 
 import javax.imageio.ImageIO;
@@ -20,6 +21,11 @@ public class Player extends Entity {
     public final int screenX;
     public final int screenY;
     
+    //player collison detector pixels , pixels of hand and head so that we can make advanced collision detectors and improve game mechanics
+    //NOTE: we can adjust this values based on what works best for our game
+    public int handPixel = 8; //the entire player asset is 48 * 48 so except hands that is soft body will be 32px , rest covers 8px and 8px hand on both side
+    public int headPixel = 16; //we want until neck top of head to eye 8px + eye to mouth 8px if u look in the asset 
+    
     public Player(GamePanel gp , KeyHandler kh , int screenX , int screenY) {
         this.gp = gp;
         this.kh = kh;
@@ -27,6 +33,15 @@ public class Player extends Entity {
 
         this.screenX = screenX;
         this.screenY = screenY;
+        
+        //solid area of player init
+        solidArea = new Rectangle();
+
+        solidArea.x = handPixel;
+        solidArea.y = headPixel;
+        solidArea.width = 32;
+        solidArea.height = 24;
+
         //call the player image method here ,to get the player image when the constructor loads.
         getPlayerImage();
     }
@@ -80,17 +95,33 @@ public class Player extends Entity {
             if(keyH.upPressed == true){
             //make player char go up>
                 this.direction = "up";    
-                worldY = worldY - speed; //based on the speed the player is moving we update the y cordinate as up involved y cordinate only.            
+                // worldY = worldY - speed; //based on the speed the player is moving we update the y cordinate as up involved y cordinate only.            
             } else if(keyH.downPressed == true){
                 this.direction = "down";
-                worldY = worldY + speed;
+                // worldY = worldY + speed;
             } else if(keyH.leftPressed == true){
                 this.direction = "left";
-                worldX = worldX - speed;
+                // worldX = worldX - speed;
             } else if(keyH.rigthPressed == true){
                 this.direction = "right";
-                worldX = worldX + speed;
+                // worldX = worldX + speed;
             }
+
+            //collison checker
+            playerCollision = false;
+            gp.cDetector.checkTile(this);
+
+            //check if not collided then only we let them move
+            if(playerCollision == false){
+                switch (direction) {
+                    case "up": worldY = worldY - speed; break;
+                    case "down" : worldY = worldY + speed; break;
+                    case "left" : worldX = worldX - speed; break;
+                    case "right" : worldX = worldX + speed;
+                    default: break;
+                }
+            }
+
 
             //after movement incement spritecounter > 
             //think of it like a mental image , after N frames ,we need to change the image ,that is the animation logic here.

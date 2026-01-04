@@ -53,7 +53,9 @@ public class GamePanel extends JPanel implements Runnable {
 
   //instantiate player class >
   public Player player = new Player(this, keyH , this.screenWidth / 2 - (this.tileSize/2) , this.screenHeight / 2 - (this.tileSize/2)); //pass the game panel class and the key handler object
-
+  
+  //init collission detector object
+  public  CollisionDetector cDetector = new CollisionDetector(this);
   // consturctor for the GamePanel class
   public GamePanel() {
 
@@ -69,7 +71,7 @@ public class GamePanel extends JPanel implements Runnable {
     
     //set default value of player
     //position the player to the center of the screen, starting in the open grassy area
-    player.setDefaultValues(this.tileSize * 25,this.tileSize * 5,false);
+    player.setDefaultValues(this.tileSize * 23,this.tileSize * 23,false);
   }
 
 
