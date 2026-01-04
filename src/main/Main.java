@@ -25,6 +25,8 @@ public class Main {
     // set visible to true to see the window
     window.setVisible(true);
 
+    //load assets of the game>
+    gamePanel.setUpGame();
     //call the thread of the gamePanel to start the game thread
     gamePanel.startGameThread();
   }

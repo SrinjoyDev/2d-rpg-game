@@ -36,7 +36,7 @@ public class TileManager {
             
             //wall:
             tile[1] = new Tile();
-            tile[1].tileImage = ImageIO.read(getClass().getResourceAsStream("/tiles-assets/wall-adv.png"));
+            tile[1].tileImage = ImageIO.read(getClass().getResourceAsStream("/tiles-assets/wall.png"));
             tile[1].collision = true;
 
             //water:
@@ -50,11 +50,11 @@ public class TileManager {
             
             //tree
             tile[4] = new Tile();
-            tile[4].tileImage = ImageIO.read(getClass().getResourceAsStream("/tiles-assets/tree-adv.png"));
+            tile[4].tileImage = ImageIO.read(getClass().getResourceAsStream("/tiles-assets/tree.png"));
             tile[4].collision = true;
             //sand
             tile[5] = new Tile();
-            tile[5].tileImage = ImageIO.read(getClass().getResourceAsStream("/tiles-assets/sand-adv.png"));
+            tile[5].tileImage = ImageIO.read(getClass().getResourceAsStream("/tiles-assets/sand.png"));
 
         } catch (Exception e) {
             e.printStackTrace();

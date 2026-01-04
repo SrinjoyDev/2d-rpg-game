@@ -8,13 +8,13 @@ import java.awt.Graphics2D;
 import javax.swing.JPanel;
 
 import entity.Player;
+import object.SuperObject;
 import tile.TileManager;
 
 //thgis game panel class extends the Jpanel in built class that is used for GUI
 public class GamePanel extends JPanel implements Runnable {
 
   // SCREEN SETTINGS>
-
   final int originalTileSize = 16; // 16 * 16 tile , means 16 * 16 pixels , thjis is a convention to keep objects// of a 2d game size to 16 * 16 .                           
   // 16 * 16 will look very small in the screen for a modern monitor
   // thus we have to scale it.
@@ -51,11 +51,18 @@ public class GamePanel extends JPanel implements Runnable {
   KeyHandler keyH = new KeyHandler(); //instantiate the key handler object from the keyhandler class
   TileManager tileM = new TileManager(this); //instantiate the tile manager.
 
+  //init object for asset setter>
+  public AssetPlacer aPlacer = new AssetPlacer(this);
+
   //instantiate player class >
   public Player player = new Player(this, keyH , this.screenWidth / 2 - (this.tileSize/2) , this.screenHeight / 2 - (this.tileSize/2)); //pass the game panel class and the key handler object
   
   //init collission detector object
   public  CollisionDetector cDetector = new CollisionDetector(this);
+
+  //init object for objects in game. for now we are keeping upto 10 objects getting rendered at the same time.
+  public SuperObject obj[] = new SuperObject[10];
+  
   // consturctor for the GamePanel class
   public GamePanel() {
 
@@ -75,7 +82,10 @@ public class GamePanel extends JPanel implements Runnable {
   }
 
 
-
+  //called before the game starts , so that we load the assets and all before the game starts.
+  public void setUpGame(){
+    aPlacer.setObject(); //set objects in the game
+  }
   //implement run method to run the thread
   @Override
   public void run() {
@@ -168,7 +178,15 @@ public class GamePanel extends JPanel implements Runnable {
   }
 
   public void update() { 
+    //update player
     player.update(keyH);
+    
+    //update object animmations
+    for(int i = 0 ; i < obj.length ; i ++){
+      if(obj[i] != null){
+        obj[i].update();
+      }
+    }
   }
 
   //paintComponent is one of the built in methods in java , this is used to draw frames in the JPanel.
@@ -185,10 +203,20 @@ public class GamePanel extends JPanel implements Runnable {
     Graphics2D g2 = (Graphics2D)g;
 
     //draw the tile , then draw the player.
+
+    //render tile
     if(!tileM.isImageNull()) tileM.draw(g2);
     
+    //render object
+    for(int i = 0 ; i < obj.length ; i++){
+      if(obj[i] != null && !obj[i].isImageNull()){
+        obj[i].draw(this, g2);
+      }
+    }
+
+    //renbder player
     if(!player.isImageNull()) player.draw(g2, this);
-    
+
     //after drawing is done , we should dispose the graphgics so that java garbage collectors can remove the resources that the graphics was sharing
     g2.dispose();
   }
