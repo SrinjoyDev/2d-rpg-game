@@ -201,6 +201,31 @@ public class Player extends Entity {
         return true;
     }
 
+    //swap items mechanics logics>
+    public void swapInventory(int a , int b){
+        Item tmp = inventory[a];
+        inventory[a] = inventory[b];
+        inventory[b] = tmp;
+    }
+
+    public void swapEquipped(int a , int b){
+        Item tmp = equipped[a];
+        equipped[a] = equipped[b];
+        equipped[b] = tmp;
+    }
+
+    public void swapInventoryToEquipped(int inv , int eq){
+        Item tmp = equipped[eq];
+        equipped[eq] = inventory[inv];
+        inventory[inv] = tmp;
+    }
+
+    public void swapEquippedToInventory(int eq , int inv){
+        Item tmp = inventory[inv];
+        inventory[inv] = equipped[eq];
+        equipped[eq] = tmp;
+    }
+
     
 //     private void printEquippedItems() {
 //         for (int i = 0; i < equipped.length; i++) {

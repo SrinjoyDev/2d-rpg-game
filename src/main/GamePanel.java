@@ -49,7 +49,10 @@ public class GamePanel extends JPanel implements Runnable {
   }
 
   //init key handler
-  KeyHandler keyH = new KeyHandler(); //instantiate the key handler object from the keyhandler class
+  public KeyHandler keyH = new KeyHandler(); //instantiate the key handler object from the keyhandler class
+
+  //init mouse handler
+  public MouseHandler mouseH = new MouseHandler();
   TileManager tileM = new TileManager(this); //instantiate the tile manager.
 
   //init object for asset setter>
@@ -78,6 +81,11 @@ public class GamePanel extends JPanel implements Runnable {
 
     //add kety listener for constructor
     this.addKeyListener(keyH); //with this the game panel will recognise the key input.
+
+    //add mouse listeners>
+    this.addMouseListener(mouseH);
+    this.addMouseMotionListener(mouseH);
+
     this.setFocusable(true); //with this gamePanle can be focussed to recive key input .
     
     //set default value of player
@@ -184,7 +192,8 @@ public class GamePanel extends JPanel implements Runnable {
   public void update() { 
     //update player
     player.update(keyH);
-
+    
+    ui.update();
     //inventory toggle
     if(keyH.inventoryPressedOnce){
       ui.toggleInventory(); //will open inventory;
@@ -197,6 +206,8 @@ public class GamePanel extends JPanel implements Runnable {
         obj[i].update();
       }
     }
+
+    
   }
 
   //paintComponent is one of the built in methods in java , this is used to draw frames in the JPanel.

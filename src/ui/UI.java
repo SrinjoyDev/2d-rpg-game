@@ -3,6 +3,8 @@ package ui;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.imageio.ImageIO;
 
@@ -18,6 +20,12 @@ public class UI {
 
     //inventory
     public boolean inventoryOpen = false;
+    
+    //inventory drag , drop , swap items mechanics
+    Item draggedItem = null;
+    Slot draggedFrom = null;
+
+    List<Slot> slots = new ArrayList<>();
 
     public UI(GamePanel gp){
         this.gp = gp;
@@ -35,11 +43,71 @@ public class UI {
             drawDimBackground(g2);
             drawInventoryGrid(g2);
         }
+
+        if(draggedItem != null){
+            g2.drawImage(draggedItem.icon, gp.mouseH.x - gp.tileSize/2, gp.mouseH.y - gp.tileSize/2 , gp.tileSize , gp.tileSize , null);
+        }
     }
 
     //toggle inventory
     public void toggleInventory() {
         inventoryOpen = !inventoryOpen;
+    }
+
+    //update method for ui grid
+    public void update() {
+        if(!inventoryOpen) return;
+
+        //start drag
+        if(gp.mouseH.pressed && draggedItem == null){
+            for (Slot s : slots){
+                if(isInsideSlot(gp.mouseH.x, gp.mouseH.y, s)) {
+                    if(s.inventorySlot){
+                        Item item = gp.player.getInventoryItems()[s.index];
+                        if(item != null && !gp.player.isItemEquipped(item)){
+                            draggedItem = item;
+                            draggedFrom = s;
+                            break;
+                        }
+                    } else {
+                        Item item = gp.player.getEquippedItems()[s.index];
+                        if(item != null){
+                            draggedItem = item;
+                            draggedFrom = s;
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+        
+        //drop
+        if(!gp.mouseH.pressed && draggedItem != null){
+            handleDrop();
+            draggedItem = null;
+            draggedFrom = null;
+        }
+    }
+
+    private void handleDrop() {
+        for (Slot target : slots){
+            if(isInsideSlot(gp.mouseH.x, gp.mouseH.y, target)){
+                //imventory -> inventory(swap)
+                if(draggedFrom.inventorySlot && target.inventorySlot){
+                    gp.player.swapInventory(draggedFrom.index , target.index);
+                } else if(draggedFrom.inventorySlot && !target.inventorySlot){
+                    //inventory -> equpped
+                    gp.player.swapInventoryToEquipped(draggedFrom.index, target.index);
+                } else if(!draggedFrom.inventorySlot && target.inventorySlot){
+                    //equipped-> inventory
+                    gp.player.swapEquippedToInventory(draggedFrom.index, target.index);
+                } else {
+                    //equpped -> equipped
+                    gp.player.swapEquipped(draggedFrom.index, target.index);
+                }
+                break;
+            }
+        }
     }
 
     //render equipped slot inventory item
@@ -70,8 +138,12 @@ public class UI {
 
     //render inventory grid -> 3 * 4 inventory grid + gap + 1 * 4 equipped grid
     private void drawInventoryGrid(Graphics2D g2){
+        //clear slots
+        slots.clear();
+
         //get inventory items
         Item[] inventory = gp.player.getInventoryItems();
+
         //get equipped items
         Item[] equipped  = gp.player.getEquippedItems();
 
@@ -96,6 +168,18 @@ public class UI {
                 int x = startX + col * (slotSize + padding);
                 int y = startY + row * (slotSize + padding);
 
+                //make slot for each box we store ever reference to this slot objct s which is of type Slot class.
+                Slot s = new Slot();
+                s.x = x;
+                s.y = y;
+                s.size = slotSize;
+                s.index = index;
+                s.inventorySlot = true;
+
+                //add slot
+                slots.add(s);
+
+                //draw inventory grid
                 g2.drawImage(slotBoxImage, x, y , slotSize , slotSize , null);
 
                 if(index < inventory.length && inventory[index] != null && !gp.player.isItemEquipped(inventory[index])){
@@ -110,6 +194,17 @@ public class UI {
 
         for (int i = 0 ; i < equipped.length ; i++) {
             int y = startY + i * (slotSize + padding);
+
+            Slot s = new Slot();
+            s.x = equippedX;
+            s.y = y;
+            s.size = slotSize;
+            s.index = i;
+            s.inventorySlot = false;
+            slots.add(s);
+
+
+            //after these things the gui knows where each and every slot iss
             
             g2.drawImage(slotBoxImage, equippedX, y , slotSize , slotSize , null);
 
@@ -117,6 +212,10 @@ public class UI {
                 g2.drawImage(equipped[i].icon, equippedX + 6, y + 6 , slotSize - 12 , slotSize - 12 , null);
             }
         }
+    }
+
+    private boolean isInsideSlot(int mX , int mY , Slot s){
+        return mX >= s.x && mX <= s.x + s.size && mY >= s.y && mY <= s.y + s.size;
     }
 
     private void drawDimBackground(Graphics2D g2){
