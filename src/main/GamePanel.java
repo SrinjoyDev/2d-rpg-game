@@ -62,10 +62,10 @@ public class GamePanel extends JPanel implements Runnable {
   public  CollisionDetector cDetector = new CollisionDetector(this);
 
   //init object for objects in game. for now we are keeping upto 10 objects getting rendered at the same time.
-  public SuperObject obj[] = new SuperObject[10];
+  public SuperObject obj[] = new SuperObject[20];
 
   //load ui elements to render on screen
-  UI ui = new UI(this);
+  public UI ui = new UI(this);
   
   // consturctor for the GamePanel class
   public GamePanel() {
@@ -184,6 +184,12 @@ public class GamePanel extends JPanel implements Runnable {
   public void update() { 
     //update player
     player.update(keyH);
+
+    //inventory toggle
+    if(keyH.inventoryPressedOnce){
+      ui.toggleInventory(); //will open inventory;
+      keyH.inventoryPressedOnce = false; //consume input
+    }
     
     //update object animmations
     for(int i = 0 ; i < obj.length ; i ++){

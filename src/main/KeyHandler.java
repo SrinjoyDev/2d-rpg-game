@@ -16,6 +16,9 @@ public class KeyHandler implements KeyListener {
 
     public boolean equipPressed = false; //we will use equip key as interaction , house enter , pick up object ..etc
     public boolean equipPressedOnce = false;
+
+    //INVENTORY>
+    public boolean inventoryPressedOnce = false;
     
 
     //TODO : add diagonal movement booleans also
@@ -55,6 +58,11 @@ public class KeyHandler implements KeyListener {
             equipPressedOnce = true;
         }
 
+        //inventory pressed with E key.
+        if(code == KeyEvent.VK_E && !inventoryPressedOnce) {
+            inventoryPressedOnce = true;
+        }
+
         //TODO : we can update diagonal movements too.
     }
 
@@ -91,6 +99,11 @@ public class KeyHandler implements KeyListener {
         if(code == KeyEvent.VK_F){
             equipPressed = false;
             equipPressedOnce = false;
+        }
+
+        //inventory released with E key.
+        if(code == KeyEvent.VK_E) {
+            inventoryPressedOnce = false;
         }
 
     }

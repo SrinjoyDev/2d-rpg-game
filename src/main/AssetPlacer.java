@@ -48,5 +48,30 @@ public class AssetPlacer {
         gp.obj[6] = new Obj_chest();
         gp.obj[6].worldX = 10 * gp.tileSize;
         gp.obj[6].worldY = 7 * gp.tileSize;
+
+        //key
+        gp.obj[7] = new Obj_key();
+        gp.obj[7].worldX = 26 * gp.tileSize;
+        gp.obj[7].worldY = 7 * gp.tileSize;
+
+        //key
+        gp.obj[8] = new Obj_key();
+        gp.obj[8].worldX = 20 * gp.tileSize;
+        gp.obj[8].worldY = 7 * gp.tileSize;
+
+        //key
+        gp.obj[9] = new Obj_key();
+        gp.obj[9].worldX = 20 * gp.tileSize;
+        gp.obj[9].worldY = 10 * gp.tileSize;
+
+        //key
+        gp.obj[10] = new Obj_key();
+        gp.obj[10].worldX = 21 * gp.tileSize;
+        gp.obj[10].worldY = 14 * gp.tileSize;
+
+        //key
+        gp.obj[11] = new Obj_key();
+        gp.obj[11].worldX = 24 * gp.tileSize;
+        gp.obj[11].worldY = 20 * gp.tileSize;
     }
 }

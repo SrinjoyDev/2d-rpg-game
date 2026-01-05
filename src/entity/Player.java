@@ -66,7 +66,6 @@ public class Player extends Entity {
     //method to get player image
     public void getPlayerImage() {
         try {
-            
             //load images
             up1 = ImageIO.read(getClass().getResourceAsStream("/player-assets/player_up_1.png"));
             up2 = ImageIO.read(getClass().getResourceAsStream("/player-assets/player_up_2.png"));
@@ -119,7 +118,7 @@ public class Player extends Entity {
             pickUpObject(objectIndex);
         }
 
-        boolean isMoving = keyH.upPressed || keyH.downPressed || keyH.leftPressed || keyH.rigthPressed;
+        boolean isMoving = (keyH.upPressed || keyH.downPressed || keyH.leftPressed || keyH.rigthPressed) && (!gp.ui.inventoryOpen);
 
         if(isMoving){
             //TODO: add sprint direction also
@@ -169,6 +168,15 @@ public class Player extends Entity {
         }
     }
 
+    public boolean isItemEquipped(Item item){
+        for(Item eq : equipped){
+            if(eq == item){
+                return true;
+            }
+        }
+        return false;
+    }
+
     //add item to inventory
     public boolean addItem(Item item) {
         //add to inventory
@@ -177,45 +185,44 @@ public class Player extends Entity {
                 //add item to inventory
                 inventory[i] = item;
                 System.out.println("item added to inventory");
-                printInventoryItems();
                 break;
             }
         }
         
-        //auto equip items added to inventory
+        //auto equip items only if space is there in equipped slots.
         for(int i = 0 ; i < equipped.length ; i++){
             if(equipped[i] == null){
                 equipped[i] = item;
                 System.out.println("item auto equipped");
-                printEquippedItems();
-                break;
+                return true;
             }
         }
 
         return true;
     }
 
-    public void printEquippedItems() {
-        for (int i = 0; i < equipped.length; i++) {
-            if (equipped[i] != null) {
-                System.out.println("equipped slot " + i + ": " + equipped[i].name);
-            } else {
-                System.out.println("equipped slot " + i + ": empty");
-            }
-        }
-        System.out.println();
-    }
+    
+//     private void printEquippedItems() {
+//         for (int i = 0; i < equipped.length; i++) {
+//             if (equipped[i] != null) {
+//                 System.out.println("equipped slot " + i + ": " + equipped[i].name);
+//             } else {
+//                 System.out.println("equipped slot " + i + ": empty");
+//             }
+//         }
+//         System.out.println();
+//     }
 
-   public void printInventoryItems() {
-        for (int i = 0; i < inventory.length; i++) {
-            if (inventory[i] != null) {
-                System.out.println("inventory slot " + i + ": " + inventory[i].name);
-            } else {
-                System.out.println("inventory slot " + i + ": empty");
-            }
-        }
-        System.out.println();
-    }
+//    private void printInventoryItems() {
+//         for (int i = 0; i < inventory.length; i++) {
+//             if (inventory[i] != null) {
+//                 System.out.println("inventory slot " + i + ": " + inventory[i].name);
+//             } else {
+//                 System.out.println("inventory slot " + i + ": empty");
+//             }
+//         }
+//         System.out.println();
+//     }
 
     //getter for get equipped items
     public Item[] getEquippedItems(){
