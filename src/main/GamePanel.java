@@ -10,6 +10,7 @@ import javax.swing.JPanel;
 import entity.Player;
 import object.SuperObject;
 import tile.TileManager;
+import ui.UI;
 
 //thgis game panel class extends the Jpanel in built class that is used for GUI
 public class GamePanel extends JPanel implements Runnable {
@@ -62,6 +63,9 @@ public class GamePanel extends JPanel implements Runnable {
 
   //init object for objects in game. for now we are keeping upto 10 objects getting rendered at the same time.
   public SuperObject obj[] = new SuperObject[10];
+
+  //load ui elements to render on screen
+  UI ui = new UI(this);
   
   // consturctor for the GamePanel class
   public GamePanel() {
@@ -203,8 +207,6 @@ public class GamePanel extends JPanel implements Runnable {
     Graphics2D g2 = (Graphics2D)g;
 
     g2.setColor(Color.white);
-    
-    g2.drawString("FPS: " + this.currentFps , 10 ,20 );
 
     //draw the tile , then draw the player.
 
@@ -220,6 +222,10 @@ public class GamePanel extends JPanel implements Runnable {
 
     //renbder player
     if(!player.isImageNull()) player.draw(g2, this);
+
+    //render ui on top
+    g2.drawString("FPS: " + this.currentFps , 10 ,20 );
+    ui.draw(g2);
 
     //after drawing is done , we should dispose the graphgics so that java garbage collectors can remove the resources that the graphics was sharing
     g2.dispose();

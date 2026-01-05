@@ -24,10 +24,11 @@ public class AssetPlacer {
         gp.obj[1].worldY = 40 * gp.tileSize;
 
         //key
-        gp.obj[1] = new Obj_key();
-        gp.obj[1].worldX = 37 * gp.tileSize;
-        gp.obj[1].worldY = 7 * gp.tileSize;
+        gp.obj[2] = new Obj_key();
+        gp.obj[2].worldX = 37 * gp.tileSize;
+        gp.obj[2].worldY = 7 * gp.tileSize;
 
+        
         //door
         gp.obj[3] = new Obj_door();
         gp.obj[3].worldX = 10 * gp.tileSize;

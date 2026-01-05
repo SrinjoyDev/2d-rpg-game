@@ -1,7 +1,6 @@
 package main;
 
 import entity.Entity;
-import entity.Player;
 
 public class CollisionDetector {
     GamePanel gp;
@@ -86,7 +85,7 @@ public class CollisionDetector {
                 gp.obj[i].solidArea.y += gp.obj[i].worldY;
 
                 switch(entity.direction){
-
+                    
                     case "up":
                         //simulate entity movemenbnt when direction is up
                         entity.solidArea.y -= entity.speed;

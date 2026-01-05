@@ -4,6 +4,7 @@ import java.awt.Graphics2D;
 import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
 
+import inventory.Item;
 import main.GamePanel;
 
 public class SuperObject {
@@ -29,6 +30,11 @@ public class SuperObject {
     //animation
     int floatOffset = 0;
     int floatDirection = 1; //direction , +1 one movement , -1 opposite movement
+
+    //object to item
+    public Item toItem(){
+        return new Item(this.name, this.ObjectImage); //convert this world object to item for inventory usage.
+    }
 
     public boolean isImageNull() {
         return ObjectImage == null;

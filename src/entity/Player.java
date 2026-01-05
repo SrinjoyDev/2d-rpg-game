@@ -6,6 +6,7 @@ import java.awt.image.BufferedImage;
 
 import javax.imageio.ImageIO;
 
+import inventory.Item;
 import main.GamePanel;
 import main.KeyHandler;
 
@@ -24,7 +25,12 @@ public class Player extends Entity {
     //NOTE: we can adjust this values based on what works best for our game
     public int handPixel = 8; //the entire player asset is 48 * 48 so except hands that is soft body will be 32px , rest covers 8px and 8px hand on both side
     public int headPixel = 16; //we want until neck top of head to eye 8px + eye to mouth 8px if u look in the asset 
-    
+
+    //INVENTORY>
+    private Item[] inventory = new Item[16]; //total items player can keep
+    private Item[] equipped = new Item[4]; //total items player can equip
+
+    //constructor for player class
     public Player(GamePanel gp , KeyHandler kh , int screenX , int screenY) {
         this.gp = gp;
         this.kh = kh;
@@ -44,6 +50,9 @@ public class Player extends Entity {
         //object interactiom
         solid_area_default_X = solidArea.x;
         solid_area_default_Y=  solidArea.y;
+
+        //init inventory when player class loads>
+
 
         //call the player image method here ,to get the player image when the constructor loads.
         getPlayerImage();
@@ -151,18 +160,74 @@ public class Player extends Entity {
         }
     }
 
-
     //object interaction -> what happens when player touches an object>
     public void pickUpObject(int index) {
 
         //if index != 999 that 999 index is that player didnt touch any object.
         if(index != 999){
-            //add to player inventory ...etc
-            //TODO
-            //delete the object from the screen
-            gp.obj[index] = null; 
-            
+            //convert object to item
+            Item item = gp.obj[index].toItem();
+            boolean is_added = addItem(item); //add item to inventory
+            if (is_added) gp.obj[index] = null; //remove from world.
         }
+    }
+
+    //add item to inventory
+    public boolean addItem(Item item) {
+        //add to inventory
+        for(int i = 0 ; i < inventory.length ; i++ ){
+            if(inventory[i] == null){ //if slot empty
+                //add item to inventory
+                inventory[i] = item;
+                System.out.println("item added to inventory");
+                printInventoryItems();
+                break;
+            }
+        }
+        
+        //auto equip items added to inventory
+        for(int i = 0 ; i < equipped.length ; i++){
+            if(equipped[i] == null){
+                equipped[i] = item;
+                System.out.println("item auto equipped");
+                printEquippedItems();
+                break;
+            }
+        }
+
+        return true;
+    }
+
+    public void printEquippedItems() {
+        for (int i = 0; i < equipped.length; i++) {
+            if (equipped[i] != null) {
+                System.out.println("equipped slot " + i + ": " + equipped[i].name);
+            } else {
+                System.out.println("equipped slot " + i + ": empty");
+            }
+        }
+        System.out.println();
+    }
+
+   public void printInventoryItems() {
+        for (int i = 0; i < inventory.length; i++) {
+            if (inventory[i] != null) {
+                System.out.println("inventory slot " + i + ": " + inventory[i].name);
+            } else {
+                System.out.println("inventory slot " + i + ": empty");
+            }
+        }
+        System.out.println();
+    }
+
+    //getter for get equipped items
+    public Item[] getEquippedItems(){
+        return equipped;
+    }
+
+    //public get inventory
+    public Item[] getInventoryItems(){
+        return inventory;
     }
 
     //method to update graphics of the player.
