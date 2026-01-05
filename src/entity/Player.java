@@ -51,9 +51,6 @@ public class Player extends Entity {
         solid_area_default_X = solidArea.x;
         solid_area_default_Y=  solidArea.y;
 
-        //init inventory when player class loads>
-
-
         //call the player image method here ,to get the player image when the constructor loads.
         getPlayerImage();
     }
