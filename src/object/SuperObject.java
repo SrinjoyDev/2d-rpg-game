@@ -1,6 +1,7 @@
 package object;
 
 import java.awt.Graphics2D;
+import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
 
 import main.GamePanel;
@@ -12,6 +13,18 @@ public class SuperObject {
     public boolean objectCollision = false;
     public int worldX , worldY;
     public boolean bounce = false;
+    
+    //text animations when player is open.
+    public boolean is_player_close_to_object = false;
+    public String textToDisplay;
+
+
+    //solid area for object interaction
+    //if we want we can place different solid area for each object , but for this game all object will have the same solid area.
+    public Rectangle solidArea = new Rectangle(0 , 0 , 48 , 48); //x,y,width,height -> wifth and height are the size of a tile , so entire object will be a solid area.
+
+    public int solid_area_default_X = 0;
+    public int solid_area_default_Y = 0;
 
     //animation
     int floatOffset = 0;
@@ -41,6 +54,25 @@ public class SuperObject {
            screenY < gp.screenHeight + gp.tileSize 
         ) {
             g2.drawImage(ObjectImage, screenX, screenY , gp.tileSize , gp.tileSize , null);
+
+            if(is_player_close_to_object){
+                switch (name) {
+                    case "key" :
+                        this.textToDisplay = "press F to pick up the key!";
+                        g2.drawString(textToDisplay, screenX, screenY + 1);
+                        break;
+
+                    case "door" :
+                        this.textToDisplay = "press F to open the door!";
+                        g2.drawString(textToDisplay, screenX, screenY + 2);
+                        break;
+
+                    case "chest" :
+                        this.textToDisplay = "press F to open the chest";
+                        g2.drawString(textToDisplay, screenX, screenY + 1);
+                        break;
+                }
+            }
         }
     }
 }

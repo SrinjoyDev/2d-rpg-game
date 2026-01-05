@@ -20,4 +20,7 @@ public class Entity {
     //collision detection
     public Rectangle solidArea; //player's body is solid part  , not the entire thing incuding heads , hands ...etc , that is bad game mechanics
     public boolean playerCollision = false;
+
+    //for object interaction
+    public int solid_area_default_X , solid_area_default_Y;
 }

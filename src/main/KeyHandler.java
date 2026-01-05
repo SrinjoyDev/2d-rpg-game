@@ -13,6 +13,9 @@ public class KeyHandler implements KeyListener {
     public boolean shiftPressed = false;
     public boolean walk  = true; //default is walk.
     public boolean sprint = false; //shift + movement keys = run
+
+    public boolean equipPressed = false; //we will use equip key as interaction , house enter , pick up object ..etc
+    public boolean equipPressedOnce = false;
     
 
     //TODO : add diagonal movement booleans also
@@ -41,8 +44,15 @@ public class KeyHandler implements KeyListener {
             rigthPressed = true;
         }
 
+        //shift key pressed for sprint events
         if(code == KeyEvent.VK_SHIFT){
             shiftPressed = true;
+        }
+
+        //F key pressed which is for equip
+        if(code == KeyEvent.VK_F && !equipPressedOnce){
+            equipPressed = true;
+            equipPressedOnce = true;
         }
 
         //TODO : we can update diagonal movements too.
@@ -75,6 +85,12 @@ public class KeyHandler implements KeyListener {
         //shift release means walk again.
         if (code == KeyEvent.VK_SHIFT){
             shiftPressed = false;
+        }
+
+        //equip released
+        if(code == KeyEvent.VK_F){
+            equipPressed = false;
+            equipPressedOnce = false;
         }
 
     }

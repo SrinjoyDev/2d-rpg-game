@@ -202,6 +202,10 @@ public class GamePanel extends JPanel implements Runnable {
     //color management and text layouts.
     Graphics2D g2 = (Graphics2D)g;
 
+    g2.setColor(Color.white);
+    
+    g2.drawString("FPS: " + this.currentFps , 10 ,20 );
+
     //draw the tile , then draw the player.
 
     //render tile

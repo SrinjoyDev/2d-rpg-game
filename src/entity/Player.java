@@ -1,6 +1,5 @@
 package entity;
 
-import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
@@ -42,6 +41,10 @@ public class Player extends Entity {
         solidArea.width = 32;
         solidArea.height = 24;
 
+        //object interactiom
+        solid_area_default_X = solidArea.x;
+        solid_area_default_Y=  solidArea.y;
+
         //call the player image method here ,to get the player image when the constructor loads.
         getPlayerImage();
     }
@@ -81,35 +84,41 @@ public class Player extends Entity {
     //method to update the position of player
     public void update(KeyHandler keyH) {
 
-        int speed = sprint ? 6 : 2;
+        int speed = sprint ? 4 : 2;
+
+        if(keyH.upPressed == true){
+            //make player char go up>
+            this.direction = "up";    
+            // worldY = worldY - speed; //based on the speed the player is moving we update the y cordinate as up involved y cordinate only.            
+        } else if(keyH.downPressed == true){
+            this.direction = "down";
+            // worldY = worldY + speed;
+        } else if(keyH.leftPressed == true){
+            this.direction = "left";
+            // worldX = worldX - speed;
+        } else if(keyH.rigthPressed == true){
+            this.direction = "right";
+            // worldX = worldX + speed;
+        }
+
+        //tile collision checker
+        playerCollision = false;
+        gp.cDetector.checkTile(this);
+
+        //object collision checker
+        int objectIndex = gp.cDetector.checkObject(this, true); //pass true as this is player moving here.
+        
+        if(keyH.equipPressed && objectIndex != 999){
+            System.out.println("equip key pressed :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::: ");
+            pickUpObject(objectIndex);
+        }
+
         boolean isMoving = keyH.upPressed || keyH.downPressed || keyH.leftPressed || keyH.rigthPressed;
 
         if(isMoving){
-        //TODO: add sprint direction also
+            //TODO: add sprint direction also
 
-            //update player speed when sprint.
-            //this is usually done in game mechanics , user would press movement keys then sprint , then only it works , normal sprint logic
-            if (isMoving && keyH.shiftPressed) sprint = true;
-            if (!keyH.shiftPressed) sprint = false;
-
-            if(keyH.upPressed == true){
-            //make player char go up>
-                this.direction = "up";    
-                // worldY = worldY - speed; //based on the speed the player is moving we update the y cordinate as up involved y cordinate only.            
-            } else if(keyH.downPressed == true){
-                this.direction = "down";
-                // worldY = worldY + speed;
-            } else if(keyH.leftPressed == true){
-                this.direction = "left";
-                // worldX = worldX - speed;
-            } else if(keyH.rigthPressed == true){
-                this.direction = "right";
-                // worldX = worldX + speed;
-            }
-
-            //collison checker
-            playerCollision = false;
-            gp.cDetector.checkTile(this);
+            sprint = keyH.shiftPressed;
 
             //check if not collided then only we let them move
             if(playerCollision == false){
@@ -121,7 +130,6 @@ public class Player extends Entity {
                     default: break;
                 }
             }
-
 
             //after movement incement spritecounter > 
             //think of it like a mental image , after N frames ,we need to change the image ,that is the animation logic here.
@@ -143,12 +151,23 @@ public class Player extends Entity {
         }
     }
 
+
+    //object interaction -> what happens when player touches an object>
+    public void pickUpObject(int index) {
+
+        //if index != 999 that 999 index is that player didnt touch any object.
+        if(index != 999){
+            //add to player inventory ...etc
+            //TODO
+            //delete the object from the screen
+            gp.obj[index] = null; 
+            
+        }
+    }
+
     //method to update graphics of the player.
     public void draw(Graphics2D g2 , GamePanel gp) {
-        g2.setColor(Color.white);
-        g2.drawString("FPS: " + gp.currentFps , 10 ,20 );
-
-        // //when u want to draw something on the screen with grahics 2d , it asks for the x,y coordinates , and the width and the height for the screen , so that it can draw and render it.
+        //when u want to draw something on the screen with grahics 2d , it asks for the x,y coordinates , and the width and the height for the screen , so that it can draw and render it.
         // g2.fillRect(x, y, gp.tileSize, gp.tileSize); //rectangle depricated we will use our player now.
 
         //TODO : add sprint graphics also
