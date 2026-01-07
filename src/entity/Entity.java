@@ -6,7 +6,7 @@ import java.awt.image.BufferedImage;
 //entity class this stores variables will be used in player , monster and NPC classes.
 public class Entity {
     // public int x ,y; //x y co-ordinates of the entity
-    public int worldX , worldY; //players position on the world map
+    public int worldX , worldY; //entity position on the world map
     public int speed; //speed of the entity
 
     //buffered image describes an image with an accesivblwe buffer of image data . (we use this to store our image files)
@@ -18,7 +18,7 @@ public class Entity {
     public int spriteNum = 1;
 
     //collision detection
-    public Rectangle solidArea; //player's body is solid part  , not the entire thing incuding heads , hands ...etc , that is bad game mechanics
+    public Rectangle solidArea; //player's body is solid part . excliding hands , head , and some part of legs from solid part , as those parts of a player are flexible.
     public boolean playerCollision = false;
 
     //for object interaction

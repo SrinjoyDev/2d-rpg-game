@@ -17,14 +17,14 @@ public class Player extends Entity {
 
     public boolean sprint = false;
 
-    //bacgornnd map co-ordintes , the map also needs to move whenn player moves from one location to another
+    //screen x and screen y w.r.t player.
     public final int screenX;
     public final int screenY;
     
-    //player collison detector pixels , pixels of hand and head so that we can make advanced collision detectors and improve game mechanics
-    //NOTE: we can adjust this values based on what works best for our game
+    //player solid area pixels.
     public int handPixel = 8; //the entire player asset is 48 * 48 so except hands that is soft body will be 32px , rest covers 8px and 8px hand on both side
     public int headPixel = 16; //we want until neck top of head to eye 8px + eye to mouth 8px if u look in the asset 
+    public int legPixel = 16; //leg pixel of player..
 
     //INVENTORY>
     private Item[] inventory = new Item[16]; //total items player can keep
@@ -36,6 +36,7 @@ public class Player extends Entity {
         this.kh = kh;
         this.direction = "down";
 
+        //player position on screen (centre of the screen)
         this.screenX = screenX;
         this.screenY = screenY;
         
@@ -44,14 +45,14 @@ public class Player extends Entity {
 
         solidArea.x = handPixel;
         solidArea.y = headPixel;
-        solidArea.width = 32;
-        solidArea.height = 24;
+        solidArea.width = gp.tileSize - handPixel - handPixel; //remove two hands whatever space is there
+        solidArea.height = gp.tileSize - headPixel - legPixel; //remove head and some legs , whatever space is trher
 
-        //object interactiom
+        //object interactiom , default solid arrea is this , when objects interact then solid area changes.
         solid_area_default_X = solidArea.x;
         solid_area_default_Y=  solidArea.y;
 
-        //call the player image method here ,to get the player image when the constructor loads.
+        //load player assets
         getPlayerImage();
     }
 
@@ -91,23 +92,14 @@ public class Player extends Entity {
 
         int speed = sprint ? 4 : 2;
 
-        if(keyH.upPressed == true){
-            //make player char go up>
-            this.direction = "up";    
-            // worldY = worldY - speed; //based on the speed the player is moving we update the y cordinate as up involved y cordinate only.            
-        } else if(keyH.downPressed == true){
-            this.direction = "down";
-            // worldY = worldY + speed;
-        } else if(keyH.leftPressed == true){
-            this.direction = "left";
-            // worldX = worldX - speed;
-        } else if(keyH.rigthPressed == true){
-            this.direction = "right";
-            // worldX = worldX + speed;
-        }
+        //MOVEMENT DIRECTION MECHANICS.
+        if(keyH.upPressed) this.direction = "up";
+        else if(keyH.downPressed) this.direction = "down";
+        else if(keyH.leftPressed) this.direction = "left";
+        else if(keyH.rigthPressed) this.direction = "right";
 
-        //tile collision checker
-        playerCollision = false;
+        //TILE COLLISON CHECKER.
+        playerCollision = false; //init player collison as false at beginning , flag becomes true when player collides.
         gp.cDetector.checkTile(this);
 
         //object collision checker
