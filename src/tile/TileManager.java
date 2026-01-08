@@ -12,16 +12,19 @@ import main.GamePanel;
 public class TileManager {
     
     GamePanel gp;
-    public Tile[] tile;
-    final int tileLength = 10;
-    public int mapTileNum[][];
+    public Tile[] tile; //array of objects whrere we will store each tile object.
+    final int tileLength = 10; //number of different tiles we have in the game.
+    public int mapTileNum[][]; //2d array that will store the numbers of each tile from the map text file.
 
     public TileManager(GamePanel gp) {
         this.gp = gp;
         tile = new Tile[tileLength];
-        //call the getTileImage in the constructor to get the image of the tiles when the class of tile loads.
-        mapTileNum = new int[gp.maxWorldCol][gp.maxWorldRow]; //map tile number 2d matrix will store all the numbers from thge map.txt file.
+
+        mapTileNum = new int[gp.maxWorldCol][gp.maxWorldRow]; //map covers the entire wolrd. so size of the mapTileNum 2d array is max world col and max world row.
+        
+        //load tile images
         getTileImage();
+
         //load the map
         loadMap("/maps/world_01.txt");
     }
@@ -29,11 +32,11 @@ public class TileManager {
     public void getTileImage(){
         try {
             
-            //instantiate the tiles in the tile array
             //grass:
             tile[0] = new Tile();
             tile[0].tileImage = ImageIO.read(getClass().getResourceAsStream("/tiles-assets/grass.png"));
-            
+            tile[0].collision = false;
+
             //wall:
             tile[1] = new Tile();
             tile[1].tileImage = ImageIO.read(getClass().getResourceAsStream("/tiles-assets/wall.png"));
@@ -55,6 +58,7 @@ public class TileManager {
             //sand
             tile[5] = new Tile();
             tile[5].tileImage = ImageIO.read(getClass().getResourceAsStream("/tiles-assets/sand.png"));
+            tile[5].collision = false;
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -67,7 +71,11 @@ public class TileManager {
        
     }
 
-    //load the map
+    /*
+        LOAD MAP:
+        read the map from the map string we have line by line.
+        and parse each row's columns.
+    */
     public void loadMap(String mapLocation){
         try {
             //open the map text file , and read it efficiently.
@@ -79,10 +87,10 @@ public class TileManager {
 
             //2d game mechanics 101
             
-            while(col < gp.maxWorldCol && row < gp.maxWorldRow){
-                String line = br.readLine(); //it is gonna read a single line from the buffered reader and put into the String line var.
+            while(row < gp.maxWorldRow){ //constraint over rows to not read more rows than our world supports.
+                String line = br.readLine(); //read tghe charecters from the buffer reader. in a single line.
                 //after we get the line we gonna get the numbers from the line
-                while(col < gp.maxWorldCol){
+                while(col < gp.maxWorldCol){ //after reading the line , we proces each column of that line basiclly each number of that line
                     String numbers[] = line.split(" "); //split by space gives us the charecters.
                     int num = Integer.parseInt(numbers[col]); //convert the current number from string to integer.
                     //then we store the extracted number in the mapTileNum 2d array we had.
@@ -102,33 +110,58 @@ public class TileManager {
         }
     }
 
+    /*
+        render map. --> This method is called every frame from the game panel class.
+        NOTE : this mechanics of map rendering is very basic.
+        efficient for small maps.
+        but for very large maps , we would have to implement load unload methods
+        for example : load maps when player appproaches , and remove renders from the memory once player 
+        goes past that part of the map , for efficient rendering.
+    */
     public void draw(Graphics2D g2){
 
         //TODO : infinite world map likke minecraft but in 2d.
 
+        //loop counters for iterating through the 2d map grid mapTileNum.
         int worldCol = 0;
         int worldRow = 0;
-        // int x = 0; deprecated use for single map not world maps
-        // int y = 0; deprecated use for single map not world maps
 
         //display entire map.
         while(worldCol < gp.maxWorldCol && worldRow < gp.maxWorldRow){
 
-            int tileNum = mapTileNum[worldCol][worldRow]; //get the number for that current index.
+            //1. get the tile type. , 0 -> grass  , 1 , 2 , 3 , 4 , 5 ...etc
+            
+            int tileNum = mapTileNum[worldCol][worldRow];
 
-            //2d game mechanics 101
-
-            //relative co-ordinate calc >
+            //2. absolute tile position in the world map
+            
             int worldX = worldCol * gp.tileSize; //x cord relative to world
             int worldY = worldRow * gp.tileSize; //y cord relative to world
 
-            //camera transformation that makes the world move around the player.
-            int screenX = worldX - gp.player.worldX + gp.player.screenX; //worldx - gp.playerWorldX -> centre the player at centre of the world , + gp.player.screenX -> place them at the centre of the screen.
-            int screenY = worldY - gp.player.worldY + gp.player.screenY; //same logic how x works
+            //3. camera transformation , world -> screen.
 
-            //2d game mechanics 101
+            // 3.1 tile offset calc from player in screen.
+            
+            int x_cord_offset_from_player = worldX - gp.player.worldX;
+            int y_cord_offset_from_player = worldY - gp.player.worldY;
 
-            //optimisation , so that we dont draw the entire map at once , we render the map to what player can only see
+            // 3.2 calc screen position to render the tile based on player position.
+            
+            int screenX = x_cord_offset_from_player + gp.player.screenX; //worldx - gp.playerWorldX -> centre the player at centre of the world , + gp.player.screenX -> place them at the centre of the screen.
+            int screenY = y_cord_offset_from_player + gp.player.screenY; //same logic how x works
+
+            //4. render what the player can only see -> viewport optimisation.
+            //we render the edges also as buffer , to prevent bad experience of tiles popping in and out.
+
+            //UNOPTIMAL APPROACH
+
+            // if(screenX >= 0 && screenX < gp.screenWidth && screenY >= 0 && screenY < gp.screenHeight){
+            //      g2.drawImage(tile[tileNum].tileImage, screenX, screenY , gp.tileSize , gp.tileSize , null);
+            // }
+
+
+            ///OPTIMAL APPROACH
+
             if(screenX > -gp.tileSize && //left edge of tile is not too far left
                 screenX < gp.screenWidth + gp.tileSize && //right edge of tile is not too far right
                 screenY > -gp.tileSize && //top edge of tile is not too far top
@@ -139,14 +172,10 @@ public class TileManager {
             }
 
             worldCol++; //increment col
-            // x = x + gp.tileSize; deprecated use for single map not world maps
             if(worldCol == gp.maxWorldCol){
                 worldCol = 0;
-                // x = 0; deprecated use for single map not world maps
                 worldRow++;
-                // y = y + gp.tileSize; deprecated use for single map not world maps
             }
-            
         }
     }
 }
