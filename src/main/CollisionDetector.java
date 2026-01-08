@@ -12,6 +12,8 @@ public class CollisionDetector {
     /*
         METHOD to check whether a player will collide with a tile or not.
         if it moves in its current directionm , if yes then sets entity.playerCollison = true to prevent movemetns.
+        predicts entity's next position and checks ahead.
+        called every frame , before actual movement (from the Player class.)
     */
     public void checkTile(Entity entity){
 
@@ -20,11 +22,12 @@ public class CollisionDetector {
         //here we need 4 things.
         //we need to find the solid area of the player's world left x , world right x , world top y , world bottom y , for the solid area , not the player. 
         
+        //1. GET ABSOLUTE WORLD POSITIONS
         int entity_world_left_X = entity.worldX + entity.solidArea.x;
-        int entity_world_right_x = entity.worldX + entity.solidArea.x + entity.solidArea.width;
+        int entity_world_right_x = entity.worldX + entity.solidArea.x + entity.solidArea.width; //left + width covers so gives us the right.
 
         int entity_world_top_y = entity.worldY + entity.solidArea.y;
-        int entity_world_bottom_y = entity.worldY + entity.solidArea.y + entity.solidArea.height;
+        int entity_world_bottom_y = entity.worldY + entity.solidArea.y + entity.solidArea.height; //top + height gives us the bottom
 
         //row and col of the player.
         int entity_left_col = entity_world_left_X/gp.tileSize;
