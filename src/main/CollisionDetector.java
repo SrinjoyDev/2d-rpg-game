@@ -9,7 +9,10 @@ public class CollisionDetector {
         this.gp = gp;
     }
 
-    //method to check collision with a tile
+    /*
+        METHOD to check whether a player will collide with a tile or not.
+        if it moves in its current directionm , if yes then sets entity.playerCollison = true to prevent movemetns.
+    */
     public void checkTile(Entity entity){
 
         //check whether a player is hitting a solid tile or not.

@@ -3,24 +3,28 @@ package entity;
 import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
 
-//entity class this stores variables will be used in player , monster and NPC classes.
+/*
+    Entity class for all kind of entitites in the game
+    for example , NPCs  , players , monsters ...etc
+*/
 public class Entity {
-    // public int x ,y; //x y co-ordinates of the entity
-    public int worldX , worldY; //entity position on the world map
-    public int speed; //speed of the entity
 
-    //buffered image describes an image with an accesivblwe buffer of image data . (we use this to store our image files)
-    public BufferedImage up1 ,up2 , down1 , down2 , left1, left2 , right1 , right2;
+    //WORLD SETTINGS
+    public int worldX , worldY; 
+    public int speed;
     public String direction;
 
-    //walking animation>
+    //ASSET MANAGEMENT
+    public BufferedImage up1 ,up2 , down1 , down2 , left1, left2 , right1 , right2;
+    
+    //WALKING ANIMATION
     public int spriteCounter = 0;
     public int spriteNum = 1;
 
-    //collision detection
+    //COLLISON DETECTION
     public Rectangle solidArea; //player's body is solid part . excliding hands , head , and some part of legs from solid part , as those parts of a player are flexible.
     public boolean playerCollision = false;
 
-    //for object interaction
+    //OBJECT INTERACTION
     public int solid_area_default_X , solid_area_default_Y;
 }
