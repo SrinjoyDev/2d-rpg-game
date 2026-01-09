@@ -4,9 +4,11 @@ import entity.Entity;
 
 public class CollisionDetector {
     GamePanel gp;
+    private int objectCheckRadius;
 
     public CollisionDetector(GamePanel gp){
         this.gp = gp;
+        this.objectCheckRadius = gp.tileSize * 3; //nearby 3 tiles is the radius to check for objects.
     }
 
     /*
@@ -84,6 +86,8 @@ public class CollisionDetector {
 
     /*
         METHOD to check whether an entity is colliding with any object in the game world.
+        we will check the objects which are in the radius of the player we define .
+        object outside the radius we dont check , for performance improvement.
         if yes , sets entity.playerCollision = true to prevent movement.
         called every frame before actual movement (from the Player class.)
         returns the index of the object collided with , or 999 if no collision.
@@ -94,8 +98,18 @@ public class CollisionDetector {
 
         for(int i =  0 ; i < gp.obj.length ; i++){
             if(gp.obj[i] != null ){ //if that object at that index is not null
+
+                //proximity check , skpip object which are not in radius , we find absolute difference in x and y.
+                int dx = Math.abs(gp.obj[i].worldX - entity.worldX);
+                int dy = Math.abs(gp.obj[i].worldY - entity.worldY);
+                if(dx > objectCheckRadius || dy > objectCheckRadius){
+                    continue; //skip outside radius things .
+                }
+
+                //compute things in the player radius
                 
                 //get entity solid area position
+                //offset solid area to world position
                 entity.solidArea.x += entity.worldX;
                 entity.solidArea.y += entity.worldY;
 
@@ -106,7 +120,7 @@ public class CollisionDetector {
                 switch(entity.direction){
                     
                     case "up":
-                        //simulate entity movemenbnt when direction is up
+                        //simulate entity movement when direction is up
                         entity.solidArea.y -= entity.speed;
                         if(entity.solidArea.intersects(gp.obj[i].solidArea)){
                             gp.obj[i].is_player_close_to_object = true;
