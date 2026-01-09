@@ -14,6 +14,11 @@ public class CollisionDetector {
         if it moves in its current directionm , if yes then sets entity.playerCollison = true to prevent movemetns.
         predicts entity's next position and checks ahead.
         called every frame , before actual movement (from the Player class.)
+
+        NOTE: we are not defining solid area for the tile , and using the intersect method here because
+        that will be inefficient as we wll be checking all the tiles , that will be inefficient and slow down the performance.
+        so instead what we are doing is that we are checking the tile's collision flag on each direction for 2 tiles on the direction
+        coz on each direction only 2 tiles can occur.
     */
     public void checkTile(Entity entity){
 
@@ -22,14 +27,15 @@ public class CollisionDetector {
         //here we need 4 things.
         //we need to find the solid area of the player's world left x , world right x , world top y , world bottom y , for the solid area , not the player. 
         
-        //1. GET ABSOLUTE WORLD POSITIONS
-        int entity_world_left_X = entity.worldX + entity.solidArea.x;
+        //1. GET ENTITY'S SOLID AREA POSITION IN THE WORLD
+        int entity_world_left_X = entity.worldX + entity.solidArea.x; //offset of solid area from world x for the entity
         int entity_world_right_x = entity.worldX + entity.solidArea.x + entity.solidArea.width; //left + width covers so gives us the right.
 
         int entity_world_top_y = entity.worldY + entity.solidArea.y;
         int entity_world_bottom_y = entity.worldY + entity.solidArea.y + entity.solidArea.height; //top + height gives us the bottom
 
-        //row and col of the player.
+        //2.convert solid area to grid co-ordinates.
+        // tiles are in a grid , to get grid indices we divide by tileSize.
         int entity_left_col = entity_world_left_X/gp.tileSize;
         int entity_right_col = entity_world_right_x/gp.tileSize;
 
@@ -38,6 +44,8 @@ public class CollisionDetector {
 
         int tileNum1 , tileNum2; //this is used for tile index of the tile in the world map
 
+        //3. direction based prediction and collision check.
+        //for each direction we will predict where the entity will be after movement and check the tile at that position for collision flag.
         switch(entity.direction){
 
             case "up":
@@ -74,7 +82,12 @@ public class CollisionDetector {
         }
     }
 
-    //method to check collision with a object
+    /*
+        METHOD to check whether an entity is colliding with any object in the game world.
+        if yes , sets entity.playerCollision = true to prevent movement.
+        called every frame before actual movement (from the Player class.)
+        returns the index of the object collided with , or 999 if no collision.
+    */
     public int checkObject(Entity entity , boolean player) {
         //we check  if the entity is colliding with the object or not , if yes then we return the index of the oject.
         int index = 999;
