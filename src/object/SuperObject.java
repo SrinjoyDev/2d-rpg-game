@@ -15,7 +15,7 @@ public class SuperObject {
     public int worldX , worldY;
     public boolean bounce = false;
     
-    //text animations when player is open.
+    //text animations when player is close.
     public boolean is_player_close_to_object = false;
     public String textToDisplay;
 

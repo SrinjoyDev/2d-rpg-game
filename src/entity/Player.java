@@ -105,10 +105,8 @@ public class Player extends Entity {
         //object collision checker
         int objectIndex = gp.cDetector.checkObject(this, true); //pass true as this is player moving here.
         
-        if(keyH.equipPressed && objectIndex != 999){
-            System.out.println("equip key pressed :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::: ");
-            pickUpObject(objectIndex);
-        }
+        //pick up object if user pressed equip key.
+        if(keyH.equipPressed && objectIndex != 999) pickUpObject(objectIndex);
 
         boolean isMoving = (keyH.upPressed || keyH.downPressed || keyH.leftPressed || keyH.rigthPressed) && (!gp.ui.inventoryOpen);
 
