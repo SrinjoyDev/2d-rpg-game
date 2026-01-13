@@ -93,7 +93,7 @@ public class CollisionDetector {
         returns the index of the object collided with , or 999 if no collision.
     */
     public int checkObject(Entity entity , boolean player) {
-        //we check  if the entity is colliding with the object or not , if yes then we return the index of the oject.
+        //sentinel value for no object collision.
         int index = 999;
 
         for(int i =  0 ; i < gp.obj.length ; i++){
